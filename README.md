@@ -1,199 +1,142 @@
 # ModernCounter
 
-A lightweight, dependency-free JavaScript library for animating numerical values with smooth counting effects.
+A lightweight JavaScript library for animating numerical values with multiple counter styles.
 
 ## Features
 
-- 🪶 Lightweight (< 2KB minified and gzipped)
-- 🚫 Zero dependencies
-- 🌐 Works with any framework or vanilla JS
-- 📱 Fully responsive
-- 🔌 Easy integration with scroll libraries
-- ⚙️ Highly customizable
-- 🔄 Control methods (start, stop, restart, toggle)
-- 🎨 Custom formatter support
+- 📊 **Standard Counter** - Smooth value counting with configurable options
+- 🔢 **Vertical Counter** - Slot-machine style rolling digits effect
+- 📱 **No jQuery Required** - Pure JavaScript with zero dependencies
+- 📜 **ScrollTrigger Support** - Optional GSAP integration for scroll-based animations
+- 🎨 **Customizable** - Extensive options for animations and formatting
 
 ## Installation
 
-### NPM
+```bash
+npm install modern-counter
+```
+
+For vertical counters and scroll effects, you'll also need GSAP:
 
 ```bash
-npm install moder-counter --save
+npm install gsap
 ```
 
-### Yarn
-```bash
-yarn add modern-counter
-```
+## Usage
 
-## Basic Usage
-
-### HTML
-```html
-<div class="counter" data-from="0" data-to="3450" data-speed="2000" data-decimals="0">0</div>
-```
-
-### JavaScript
+### Standard Counter
 
 ```javascript
-import { initCounter } from 'src/modern-counter';
+// ES Module
+import { ModernCounter, initCounter } from 'modern-counter';
 
-// Initialize all counters.
-document.querySelectorAll('.counter').forEach(element => {
-  initCounter(element);
-});
-
-// Or initialize a specific counter with options.
-const element = document.querySelector('#myCounter');
-initCounter(element, {
+// Basic usage
+const counter = new ModernCounter(document.querySelector('.counter'), {
   from: 0,
-  to: 7258,
-  speed: 1500,
-  onComplete: () => console.log('Counting complete!')
+  to: 1000,
+  speed: 2000
 });
-```
+counter.start();
 
-## Scroll-Based Animation
-ModernCounter works seamlessly with scroll libraries like 
-Intersection Observer, GSAP ScrollTrigger, or any other scroll detection method.
-
-### Intersection Observer
-
-```javascript
-import { initCounter } from 'src/modern-counter';
-
-const counters = document.querySelectorAll('.counter');
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      initCounter(entry.target);
-      observer.unobserve(entry.target); // Only trigger once.
-    }
-  });
-}, {
-  threshold: 0.1
+// Quick initialization
+initCounter(document.querySelector('.counter'), {
+  from: 0,
+  to: 1000
 });
 
-counters.forEach(counter => observer.observe(counter));
+// HTML data attributes
+// <div class="counter" data-from="0" data-to="1000" data-speed="2000"></div>
 ```
 
-### GSAP ScrollTrigger
+### Vertical Counter (Slot Machine Effect)
 
 ```javascript
-import { initCounter } from 'src/modern-counter';
-import { gsap } from 'gsap';
+// Import GSAP if using ScrollTrigger (optional)
+import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 gsap.registerPlugin(ScrollTrigger);
 
-document.querySelector('.counter').forEach(element => {
-  ScrollTrigger.create({
+// Import the VerticalCounter
+import { VerticalCounter, initVerticalCounters } from 'modern-counter';
+
+// Initialize a single vertical counter
+const vertCounter = new VerticalCounter(document.querySelector('.vertical-counter'), {
+  to: "456", // String value to display each digit
+  duration: 2.5, // Animation duration in seconds
+  onComplete: () => console.log('Counter finished!')
+});
+vertCounter.start();
+
+// Initialize all vertical counters on the page
+initVerticalCounters('.vertical-counter');
+
+// HTML markup
+// <div class="vertical-counter" data-to="456"></div>
+```
+
+### With ScrollTrigger (Requires GSAP)
+
+```javascript
+// Standard counter with ScrollTrigger
+const counter = new ModernCounter(element, {
+  from: 0,
+  to: 5000,
+  scrollTrigger: {
     trigger: element,
-    start: 'top 80%',
-    onEnter: () => initCounter(element),
-    once: true
-  });
+    start: "top 80%",
+    toggleActions: "play none none reset"
+  }
+});
+
+// Vertical counter with ScrollTrigger
+const verticalCounter = new VerticalCounter(element, {
+  to: "789",
+  scrollTrigger: {
+    trigger: element,
+    start: "top 70%"
+  }
 });
 ```
-## Options
+
+## Standard Counter Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `from` | Number | `0` | The number to start counting from |
-| `to` | Number | `0` | The number to count to |
-| `speed` | Number | `1000` | Duration of the count animation in milliseconds |
-| `refreshInterval` | Number | `100` | How often to update the counter (ms) |
-| `decimals` | Number | `0` | Number of decimal places to show |
-| `formatter` | Function | `value.toFixed(decimals)` | Function to format the displayed value |
-| `onUpdate` | Function | `null` | Callback for each update during counting |
-| `onComplete` | Function | `null` | Callback when counting finishes |
+| from | number | 0 | Starting value |
+| to | number | 0 | Target value |
+| speed | number | 1000 | Animation duration in milliseconds |
+| refreshInterval | number | 100 | Update frequency in milliseconds |
+| decimals | number | 0 | Number of decimal places to show |
+| formatter | Function | value.toFixed(decimals) | Function to format the displayed value |
+| onUpdate | Function | null | Callback for each counter update |
+| onComplete | Function | null | Callback when counting finishes |
+| scrollTrigger | Object | null | GSAP ScrollTrigger configuration (if GSAP is available) |
 
-## Data Attributes
+## Vertical Counter Options
 
-You can configure counters directly in HTML using these data attributes:
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| to | string | - | Target value to display (required) |
+| duration | number | 2 | Animation duration in seconds |
+| scrollTrigger | Object | null | GSAP ScrollTrigger configuration |
+| onComplete | Function | null | Callback when animation completes |
 
-| Attribute | Description |
-|-----------|-------------|
-| `data-from` | Starting value |
-| `data-to` | Target value |
-| `data-speed` | Animation duration in ms |
-| `data-refresh-interval` | Update frequency in ms |
-| `data-decimals` | Number of decimal places |
+## Standard Counter Methods
 
-## Advanced Usage
-### Custom Formatter
+- `start()` - Starts or resumes the counter animation
+- `stop()` - Stops/pauses the counter animation
+- `restart()` - Restarts the counter animation from the beginning
+- `toggle()` - Toggles the counter animation between running and stopped states
 
-```javascript
-import { initCounter } from 'src/modern-counter';
+## Vertical Counter Methods
 
-initCounter(document.querySelector('#percentCounter'), {
-  from: 0,
-  to: 100,
-  formatter: (value, options) => {
-    return `${value.toFixed(options.decimals)}%`;
-  }
-});
-
-// For currency.
-initCounter(document.querySelector('#currencyCounter'), {
-  from: 0,
-  to: 1500,
-  formatter: (value, options) => {
-    return `$${value.toFixed(options.decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
-  }
-});
-```
-
-### API Methods
-
-```javascript
-import { ModernCounter } from 'src/modern-counter';
-
-const counter = new ModernCounter(document.querySelector('#apiCounter'), {
-  from: 0,
-  to: 500,
-  speed: 3000
-});
-
-// Start the counter.
-counter.start();
-
-// Pause the counter.
-document.querySelector('#pauseBtn').addEventListener('click', () => {
-  counter.stop();
-});
-
-// Resume the counter.
-document.querySelector('#resumeBtn').addEventListener('click', () => {
-  counter.start();
-});
-
-// Reset and restart the counter.
-document.querySelector('#restartBtn').addEventListener('click', () => {
-  counter.restart();
-});
-
-// Toggle the counter.
-document.querySelector('#toggleBtn').addEventListener('click', () => {
-  counter.toggle();
-});
-```
+- `start()` - Starts the animation
+- `reset()` - Resets the counter to initial state
 
 ## Browser Support
-ModernCounter supports all modern browsers and IE11+ (with appropriate transpilation/polyfills).
+
+Works in all modern browsers (Chrome, Firefox, Safari, Edge).
 
 ## License
-### MIT
 
-## Contributing
-Contributions are welcome! Please feel free to submit a pull request.
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your change (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Credits
-ModernCounter is a modern rewrite of Matt Huggins' jquery-countTo plugin, updated for 
-moder JavaScript environments and framework and with jQuery dependency removed.
+MIT
