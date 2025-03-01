@@ -1,0 +1,45 @@
+{
+  "name": "modern-counter",
+  "version": "1.0.0",
+  "description": "A lightweight, dependency-free JavaScript library for animating numerical values with smooth counting effects.",
+  "keywords": [
+    "counter",
+    "animation",
+    "numbers",
+    "statistics",
+    "dashboard"
+  ],
+  "homepage": "https://github.com/smg058/ModernCounter#readme",
+  "bugs": {
+    "url": "https://github.com/smg058/ModernCounter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smg058/ModernCounter.git"
+  },
+  "license": "MIT",
+  "author": "Chayson Media Group <dev@chayson.com>",
+  "main": "dist/modern-counter.js",
+  "module": "dist/modern-counter.js",
+  "browser": "dist/modern-counter.min.js",
+  "scripts": {
+    "lint": "eslint src/",
+    "build": "rollup -c",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^8.57.1",
+    "rollup": "^4.34.9"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "gsap": "^3.12.7"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
+}
